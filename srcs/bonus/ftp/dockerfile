@@ -1,0 +1,23 @@
+FROM alpine:3.22.1
+
+# Install vsftpd and required packages
+RUN apk add --no-cache vsftpd openssl bash
+
+# Create required directories before creating user
+RUN mkdir -p /var/www/html /var/log/vsftpd /etc/vsftpd
+
+# Create FTP user and set up home pointing to WP directory
+RUN adduser -D -h /var/www/html -s /bin/bash ftpuser && \
+    echo "ftpuser:ftppassword" | chpasswd
+
+# Copy configuration files
+COPY config/vsftpd.conf /etc/vsftpd/vsftpd.conf
+COPY config/start.sh /start.sh
+
+# Permissions
+RUN chmod +x /start.sh && chown -R ftpuser:ftpuser /var/www/html
+
+EXPOSE 21 21000-21010
+
+CMD ["/start.sh"]
+

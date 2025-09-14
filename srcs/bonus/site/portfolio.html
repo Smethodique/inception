@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sami Takhtoukh - Backend Developer & DevOps</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --accent-color: #00d4ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(26, 26, 26, 0.8);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(120, 200, 255, 0.3) 0%, transparent 50%);
+            animation: bgShift 20s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(-20px) translateY(-20px); }
+            50% { transform: translateX(20px) translateY(-20px); }
+            75% { transform: translateX(-20px) translateY(20px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero .tagline {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero .description {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            color: var(--text-secondary);
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease 0.8s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.1);
+        }
+
+        /* Education Section */
+        .education-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .education-item h3 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .education-item .institution {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .education-item .duration {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: all 0.5s;
+        }
+
+        .project-card:hover::before {
+            left: 100%;
+        }
+
+        .project-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .project-features {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .project-features li {
+            padding: 0.2rem 0;
+            color: var(--text-secondary);
+        }
+
+        .project-features li::before {
+            content: '▸';
+            color: var(--accent-color);
+            margin-right: 0.5rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        /* Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .skill-category h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-item {
+            background: var(--secondary-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .skill-item:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        /* Languages & Soft Skills */
+        .languages-soft-skills {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .tagline {
+                font-size: 1.2rem;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .education-grid,
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 1rem;
+            }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--gradient);
+            z-index: 9999;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">ST</div>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#education" class="nav-link">Education</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Sami Takhtoukh</h1>
+            <p class="tagline">FROM LOGIC TO LAUNCH | BACKEND DEVELOPER WITH DEVOPS SKILLS</p>
+            <p class="description">
+                Software Developer with a strong focus on back-end development, system programming, and DevOps solutions. 
+                Passionate about building robust and efficient systems through hands-on problem-solving and collaborative development.
+            </p>
+            
+            <div class="contact-info">
+                <a href="mailto:takhtoukhsami@gmail.com" class="contact-item">
+                    <span>📧</span>
+                    <span>takhtoukhsami@gmail.com</span>
+                </a>
+                <a href="tel:0621210381" class="contact-item">
+                    <span>📱</span>
+                    <span>0621210381</span>
+                </a>
+                <a href="#" class="contact-item">
+                    <span>📍</span>
+                    <span>Casablanca</span>
+                </a>
+                <a href="#" class="contact-item">
+                    <span>💼</span>
+                    <span>Smethodique</span>
+                </a>
+            </div>
+
+            <a href="#projects" class="cta-button">View My Work</a>
+        </div>
+    </section>
+
+    <section id="education">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2>Education</h2>
+                <p>My educational journey in technology and engineering</p>
+            </div>
+
+            <div class="education-grid">
+                <div class="card animate-on-scroll">
+                    <div class="education-item">
+                        <h3>Software Engineering Studies</h3>
+                        <div class="institution">1337 School, Benguerir – UM6P (Université Mohammed VI Polytechnique)</div>
+                        <div class="duration">2023 – 2025</div>
+                        <p>Project-based learning in C, Shell, Git, Docker, Web technologies, and system-level programming. 
+                        Completed the peer-to-peer, project-based curriculum gaining deep experience in data structures, 
+                        web technologies, and containerization.</p>
+                    </div>
+                </div>
+
+                <div class="card animate-on-scroll">
+                    <div class="education-item">
+                        <h3>Baccalaureate in Electrotechnics (Electricity)</h3>
+                        <div class="institution">Lycée Technique Mehdi Ben Barka, Oujda – Morocco</div>
+                        <div class="duration">2021 – 2022</div>
+                        <p>Technical education focusing on electrical systems and engineering fundamentals, 
+                        providing a strong foundation in problem-solving and technical thinking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2>Projects</h2>
+                <p>Showcasing my technical expertise through hands-on projects</p>
+            </div>
+
+            <div class="projects-grid">
+                <div class="card project-card animate-on-scroll">
+                    <h3>ft_transcendence</h3>
+                    <p>A full-stack web application featuring a real-time multiplayer Pong game with custom front-end framework.</p>
+                    <ul class="project-features">
+                        <li>Built custom front-end framework in TypeScript inspired by React</li>
+                        <li>Implemented user authentication and profile management</li>
+                        <li>Created real-time chat with WebSockets</li>
+                        <li>Designed matchmaking system with game statistics</li>
+                        <li>Architected backend using microservices</li>
+                    </ul>
+                    <div class="tech-stack">
+                        <span class="tech-tag">TypeScript</span>
+                        <span class="tech-tag">Custom SPA Framework</span>
+                        <span class="tech-tag">WebSockets</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">Fastify</span>
+                    </div>
+                </div>
+
+                <div class="card project-card animate-on-scroll">
+                    <h3>Webserv</h3>
+                    <p>HTTP server built from scratch implementing the HTTP/1.1 protocol with advanced features.</p>
+                    <ul class="project-features">
+                        <li>Handled concurrent connections and request parsing</li>
+                        <li>Implemented configuration file parsing</li>
+                        <li>Added CGI support and HTTP methods</li>
+                        <li>Built response generation system</li>
+                    </ul>
+                    <div class="tech-stack">
+                        <span class="tech-tag">C++</span>
+                        <span class="tech-tag">Socket Programming</span>
+                        <span class="tech-tag">HTTP Protocol</span>
+                    </div>
+                </div>
+
+                <div class="card project-card animate-on-scroll">
+                    <h3>Inception</h3>
+                    <p>Containerized infrastructure project using Docker with multiple services and proper networking.</p>
+                    <ul class="project-features">
+                        <li>Set up Nginx, WordPress, MariaDB services</li>
+                        <li>Configured persistent volumes and environment variables</li>
+                        <li>Implemented security settings and networking</li>
+                        <li>Used Docker Compose for orchestration</li>
+                    </ul>
+                    <div class="tech-stack">
+                        <span class="tech-tag">Docker</span>
+                        <span class="tech-tag">Docker Compose</span>
+                        <span class="tech-tag">Nginx</span>
+                        <span class="tech-tag">MariaDB</span>
+                        <span class="tech-tag">WordPress</span>
+                    </div>
+                </div>
+
+                <div class="card project-card animate-on-scroll">
+                    <h3>Minishell</h3>
+                    <p>A simplified version of Unix shell with comprehensive command parsing and execution capabilities.</p>
+                    <ul class="project-features">
+                        <li>Developed command parsing and execution</li>
+                        <li>Implemented built-in commands</li>
+                        <li>Added environment variable expansion</li>
+                        <li>Handled signal processing</li>
+                    </ul>
+                    <div class="tech-stack">
+                        <span class="tech-tag">C</span>
+                        <span class="tech-tag">Unix System Calls</span>
+                        <span class="tech-tag">Shell Scripting</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2>Technical Skills</h2>
+                <p>Technologies and tools I work with</p>
+            </div>
+
+            <div class="skills-grid">
+                <div class="card animate-on-scroll">
+                    <div class="skill-category">
+                        <h3>Languages</h3>
+                        <div class="skills-list">
+                            <span class="skill-item">C</span>
+                            <span class="skill-item">C++</span>
+                            <span class="skill-item">JavaScript</span>
+                            <span class="skill-item">TypeScript</span>
+                            <span class="skill-item">Python</span>
+                            <span class="skill-item">HTML/CSS</span>
+                            <span class="skill-item">SQL</span>
+                            <span class="skill-item">Bash</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card animate-on-scroll">
+                    <div class="skill-category">
+                        <h3>Frameworks & Libraries</h3>
+                        <div class="skills-list">
+                            <span class="skill-item">React</span>
+                            <span class="skill-item">NestJS</span>
+                            <span class="skill-item">Express.js</span>
+                            <span class="skill-item">Socket.IO</span>
+                            <span class="skill-item">Fastify</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card animate-on-scroll">
+                    <div class="skill-category">
+                        <h3>Tools & Technologies</h3>
+                        <div class="skills-list">
+                            <span class="skill-item">Git</span>
+                            <span class="skill-item">Docker</span>
+                            <span class="skill-item">Docker Compose</span>
+                            <span class="skill-item">Nginx</span>
+                            <span class="skill-item">PostgreSQL</span>
+                            <span class="skill-item">MariaDB/MySQL</span>
+                            <span class="skill-item">Linux</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="languages-soft-skills">
+                <div class="card animate-on-scroll">
+                    <h3>Languages</h3>
+                    <div class="skills-list">
+                        <span class="skill-item">Arabic (Native)</span>
+                        <span class="skill-item">English (Upper Intermediate)</span>
+                        <span class="skill-item">French (Upper Intermediate)</span>
+                    </div>
+                </div>
+
+                <div class="card animate-on-scroll">
+                    <h3>Soft Skills</h3>
+                    <div class="skills-list">
+                        <span class="skill-item">Problem Solving</span>
+                        <span class="skill-item">Teamwork</span>
+                        <span class="skill-item">Adaptability</span>
+                        <span class="skill-item">Communication</span>
+                        <span class="skill-item">Time Management</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        // Active nav link highlighting
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const scrollPos = window.scrollY + 100;
+
+            sections.forEach((section, index) => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                
+                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    navLinks[index].classList.add('active');
+                }
+            });
+        }
+
+        // Navbar background on scroll
+        function handleNavbarScroll() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+
+        // Scroll progress indicator
+        function updateScrollIndicator() {
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.width = scrollPercent + '%';
+        }
+
+        // Animate elements on scroll
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('animated');
+                }
+            });
+        }
+
+        // Scroll event listeners
+        window.addEventListener('scroll', () => {
+            updateActiveNavLink();
+            handleNavbarScroll();
+            updateScrollIndicator();
+            animateOnScroll();
+        });
+
+        // Initial calls
+        document.addEventListener('DOMContentLoaded', () => {
+            animateOnScroll();
+        });
+
+        // Parallax effect for background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.bg-animation');
+            const speed = scrolled * 0.5;
+            parallax.style.transform = `translateY(${speed}px)`;
+        });
+
+        // Typing effect for hero tagline
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Initialize typing effect
+        window.addEventListener('load', () => {
+            const tagline = document.querySelector('.hero .tagline');
+            const originalText = tagline.textContent;
+            setTimeout(() => {
+                typeWriter(tagline, originalText, 30);
+            }, 1000);
+        });
+
+        // Add hover effects to cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) rotateX(5deg)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) rotateX(0)';
+            });
+        });
+
+        // Contact item click effects
+        document.querySelectorAll('.contact-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (this.href.includes('mailto:') || this.href.includes('tel:')) {
+                    // Let the default behavior happen
+                } else {
+                    e.preventDefault();
+                    // Add a pulse effect
+                    this.style.animation = 'pulse 0.6s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 600);
+                }
+            });
+        });
+
+        // Add pulse animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

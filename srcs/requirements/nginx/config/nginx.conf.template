@@ -1,0 +1,116 @@
+load_module /usr/lib/nginx/modules/ngx_stream_module.so;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    server {
+        listen 80;
+        server_name ${DOMAIN_NAME};
+        return 301 https://$host$request_uri;
+    }
+
+    server {
+        listen 443 ssl;
+        server_name ${DOMAIN_NAME};
+
+        ssl_certificate     /etc/ssl/certs/${DOMAIN_NAME}.crt;
+        ssl_certificate_key /etc/ssl/private/${DOMAIN_NAME}.key;
+
+        root /var/www/html;
+        index index.php index.html index.htm;
+
+        # AI Summarizer API endpoint - FIXED CONFIGURATION
+        location /summarize {
+            proxy_pass http://ai_summarizer:5000;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Connection "";
+            
+            # Important: Don't modify the request body or method
+            proxy_pass_request_body on;
+            proxy_pass_request_headers on;
+            proxy_buffering off;
+            
+            # Increase timeouts for AI processing
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 60s;
+            proxy_read_timeout 60s;
+            
+            # Handle CORS
+            if ($request_method = 'OPTIONS') {
+                add_header Access-Control-Allow-Origin * always;
+                add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+                add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
+                add_header Content-Length 0;
+                return 204;
+            }
+            
+            add_header Access-Control-Allow-Origin * always;
+            add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+        }
+
+        # Portfolio/CV Site
+        location /cv {
+            proxy_pass http://portfolio_site:80/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            
+            # Handle static assets properly
+            proxy_set_header Accept-Encoding "";
+            proxy_redirect off;
+        }
+
+        location / {
+            try_files $uri $uri/ /index.php?$args;
+        }
+
+        location ~ \.php$ {
+            fastcgi_pass wordpress:9000;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+        }
+
+        location /adminer/ {
+            proxy_pass http://adminer:8080/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location ~ /\.ht {
+            deny all;
+        }
+    }
+}
+
+stream {
+    server { listen 21; proxy_pass ftp:21; }
+    server { listen 21000; proxy_pass ftp:21000; }
+    server { listen 21001; proxy_pass ftp:21001; }
+    server { listen 21002; proxy_pass ftp:21002; }
+    server { listen 21003; proxy_pass ftp:21003; }
+    server { listen 21004; proxy_pass ftp:21004; }
+    server { listen 21005; proxy_pass ftp:21005; }
+    server { listen 21006; proxy_pass ftp:21006; }
+    server { listen 21007; proxy_pass ftp:21007; }
+    server { listen 21008; proxy_pass ftp:21008; }
+    server { listen 21009; proxy_pass ftp:21009; }
+    server { listen 21010; proxy_pass ftp:21010; }
+}

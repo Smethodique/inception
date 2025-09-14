@@ -1,0 +1,12 @@
+FROM alpine:3.22.1
+
+RUN apk add --no-cache redis
+
+COPY config/redis.conf /etc/redis.conf
+
+EXPOSE 6379
+
+HEALTHCHECK --interval=5s --timeout=3s --retries=3 \
+    CMD redis-cli ping || exit 1
+
+CMD ["redis-server", "/etc/redis.conf"]

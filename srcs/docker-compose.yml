@@ -1,0 +1,106 @@
+services:
+  nginx:
+    build: requirements/nginx/
+    ports:
+      - "80:80"
+      - "443:443"
+      - "21:21"
+      - "21000-21010:21000-21010"
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+      - adminer
+      - ftp
+      - my_service
+      - portfolio_site
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - inception_network
+    
+  wordpress:
+    build: requirements/wordpress/
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+      - redis
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - inception_network
+    
+  mariadb:
+    build: requirements/mariadb/
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - inception_network
+  
+  redis:
+    build: bonus/redis/
+    networks:
+      - inception_network
+    volumes:
+      - redis_data:/data/redis
+
+  adminer:
+    build: bonus/adminer/
+    depends_on:
+      - mariadb
+    networks:
+      - inception_network
+    environment:
+      - ADMINER_DEFAULT_SERVER=mariadb
+
+  ftp:
+    build: bonus/ftp/
+    env_file:
+      - .env
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - inception_network
+    environment:
+      - FTP_USER=ftpuser
+      - FTP_PASS=ftppassword
+      - PASV_ADDRESS=${DOMAIN_NAME}
+
+  my_service:
+    build: bonus/my_service/
+    container_name: ai_summarizer
+    restart: unless-stopped
+    expose:
+      - "5000"
+    networks:
+      - inception_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  portfolio_site:
+    build: bonus/site/
+    container_name: portfolio_site
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - inception_network
+    
+volumes:
+  wordpress_data:
+  db_data:
+  redis_data:
+
+networks:
+  inception_network:
+    driver: bridge
+
+
+
