@@ -10,4 +10,3 @@ clean:
 
 re: clean all
 
-.PHONY: all down clean re

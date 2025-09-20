@@ -1,5 +1,3 @@
-load_module /usr/lib/nginx/modules/ngx_stream_module.so;
-
 events {
     worker_connections 1024;
 }
@@ -14,7 +12,6 @@ http {
     ssl_prefer_server_ciphers on;
 
     server {
-        listen 80;
         server_name ${DOMAIN_NAME};
         return 301 https://$host$request_uri;
     }
@@ -44,22 +41,8 @@ http {
             proxy_pass_request_headers on;
             proxy_buffering off;
             
-            # Increase timeouts for AI processing
-            proxy_connect_timeout 60s;
-            proxy_send_timeout 60s;
-            proxy_read_timeout 60s;
             
-            # Handle CORS
-            if ($request_method = 'OPTIONS') {
-                add_header Access-Control-Allow-Origin * always;
-                add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
-                add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
-                add_header Content-Length 0;
-                return 204;
-            }
-            
-            add_header Access-Control-Allow-Origin * always;
-            add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
+
         }
 
         # Portfolio/CV Site
@@ -98,19 +81,4 @@ http {
             deny all;
         }
     }
-}
-
-stream {
-    server { listen 21; proxy_pass ftp:21; }
-    server { listen 21000; proxy_pass ftp:21000; }
-    server { listen 21001; proxy_pass ftp:21001; }
-    server { listen 21002; proxy_pass ftp:21002; }
-    server { listen 21003; proxy_pass ftp:21003; }
-    server { listen 21004; proxy_pass ftp:21004; }
-    server { listen 21005; proxy_pass ftp:21005; }
-    server { listen 21006; proxy_pass ftp:21006; }
-    server { listen 21007; proxy_pass ftp:21007; }
-    server { listen 21008; proxy_pass ftp:21008; }
-    server { listen 21009; proxy_pass ftp:21009; }
-    server { listen 21010; proxy_pass ftp:21010; }
 }

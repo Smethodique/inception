@@ -15,7 +15,7 @@ until mysqladmin ping -uroot --silent; do
   sleep 1
 done
 
-# Secure and create database / user only first time (wordpress db absent)
+# Secure and create database / user only first time (dyal wordpress db absent)
 if ! mysql -uroot -e "USE ${MYSQL_DATABASE}" >/dev/null 2>&1; then
   echo "[MariaDB] Setting root password and creating database/user..."
   mysql -uroot <<-EOSQL

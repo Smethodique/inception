@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# Populate WordPress core into the (possibly empty) mounted volume if missing
 if [ ! -f /var/www/html/wp-settings.php ]; then
     echo "WordPress core not found in volume. Downloading..."
     wget -q https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz && \
@@ -11,10 +10,7 @@ if [ ! -f /var/www/html/wp-settings.php ]; then
     echo "WordPress core populated."
 fi
 
-# Read database password from environment (no Docker secrets)
-# MYSQL_PASSWORD is expected from .env via docker-compose
 
-# Wait for MariaDB to be ready
 echo "Waiting for MariaDB to be ready..."
 while ! nc -z mariadb 3306; do 
     echo "Waiting for MariaDB..."
